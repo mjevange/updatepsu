@@ -1,7 +1,7 @@
 #!/sbin/bash
 #
 
-## Always use folders
+## Set download and install folders
 dlfolder=~/Downloads
 infolder=~/PSUnreal
 
@@ -14,7 +14,7 @@ filename=$(echo "$link" | sed 's:.*/::')
 printf "\nParsing filename: $filename\n"
 
 ## Remember filename with full path
-fullpath=~/Downloads/$filename
+fullpath=$dlfolder/$filename
 printf "\nDownload destiantion full path: $fullpath\n"
 
 ## Check if file exists
@@ -22,11 +22,11 @@ if [ -f "$fullpath" ]; then
     printf "\n$filename already exists in $folder, skipping download...\n"
 else
 	## Download if not
-    printf "\n$filename does not exist $folder, downloading...\n"
+    printf "\n$filename does not exist in $folder, downloading...\n"
     wget -P $dlfolder $link
 fi
 
-## Check if folder does NOT exist
+## Check if install folder does NOT exist
 if [ ! -d "$infolder" ]; then
 	## If no, create
     printf "\nFolder $infolder doesn't exist, creating...\n"
