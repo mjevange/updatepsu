@@ -1,0 +1,51 @@
+#!/sbin/bash
+#
+
+## Always use folders
+dlfolder=~/Downloads
+infolder=~/PSUnreal
+
+## Get Latest Link
+link=$(lynx -dump -listonly -nonumbers https://www.planeshift.it/Download | grep PSUnreal-Linux)
+printf "\nLatest download link saved: $link\n"
+
+## Extract filename from Link
+filename=$(echo "$link" | sed 's:.*/::')
+printf "\nParsing filename: $filename\n"
+
+## Remember filename with full path
+fullpath=~/Downloads/$filename
+printf "\nDownload destiantion full path: $fullpath\n"
+
+## Check if file exists
+if [ -f "$fullpath" ]; then
+    printf "\n$filename already exists in $folder, skipping download...\n"
+else
+	## Download if not
+    printf "\n$filename does not exist $folder, downloading...\n"
+    wget -P $dlfolder $link
+fi
+
+## Check if folder does NOT exist
+if [ ! -d "$infolder" ]; then
+	## If no, create
+    printf "\nFolder $infolder doesn't exist, creating...\n"
+    mkdir -p  $infolder
+else
+	printf "\nFolder $infolder exists, moving on...\n"
+fi
+
+## Check if folder empty
+if [ -z "$(ls -A $infolder)" ]; then
+   printf "\nFolder $infolder is empty, extracting $fullpath...\n"
+   tar --recursive-unlink --strip-components=2 -xjvf $fullpath -C $infolder
+else
+   printf "\nFolder $infolder is not empty!\nThis operation will delete contents of $infolder before extraction\nNote: PS Configs are safley stored in /home/cons/.config/Epic/PSUnreal\n"
+   read -p "Are you sure you want to continue (y/n)? " -n 1 -r
+   echo    # (optional) move to a new line
+   if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    # do dangerous stuff
+   tar --recursive-unlink --strip-components=2 -xjvf $fullpath -C $infolder
+fi
+fi
