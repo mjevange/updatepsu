@@ -3,11 +3,12 @@ Refresh Installation and/or Update to latest version of PlaneShift Unreal for Li
 Useful for when the updater cannot be used or full release update is required.
 
 # Features
-- Always downloads the latest version of PlaneShift Unreal for Linux
-- Allows user to specify download and install directory (Optional)
-- Checks for existance of install directory
-- Checks is install directory is empty
+- Always downloads the latest published version of PlaneShift Unreal for Linux
+- Allows user to specify install and download directory (Optional)
+- Checks for existance of install and download directories
+- Checks if install directory is empty
 - Checks with user before clearing install directory
+- Prunes root from package, that way we always extract to same install folder
 
 # Planned
 - Add logic to check if user is already on latest version, provide option to skip
