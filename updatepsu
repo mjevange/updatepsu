@@ -42,12 +42,12 @@ if [ -z "$(ls -A $infolder)" ]; then
 	tar --recursive-unlink --strip-components=2 -xjvf $fullpath -C $infolder
 else
 	## If no, check with user first
-	printf "\nFolder $infolder is not empty!\nThis operation will delete contents of $infolder before extraction\nNote: PS Configs are safley stored in /home/cons/.config/Epic/PSUnreal\n"
+	printf "\nFolder $infolder is not empty!!\nThis operation will delete contents of $infolder before extraction!!\nNote: PlaneShift Unreal for Linux Configs are safley stored in /home/cons/.config/Epic/PSUnreal\n"
 	read -p "Are you sure you want to continue (y/n)? " -n 1 -r
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		## User replied Y, clear $infolder and extract
 		tar --recursive-unlink --strip-components=2 -xjvf $fullpath -C $infolder
 	else
-		printf "Cancelling operation..."
+		printf "\nCancelling operation...\n"
 	fi
 fi
