@@ -17,6 +17,15 @@ printf "\nParsing filename: $filename\n"
 fullpath=$dlfolder/$filename
 printf "\nDownload destiantion full path: $fullpath\n"
 
+## Check if default Downloads folder does NOT exist
+## It should really already exist on every linux Distro by default, but lets check anyway
+## This will also fix user error if they specify a custom folder that doesn't exist
+if [ ! -d "$dlfolder" ]; then
+	## If not, create
+	mkdir -p $dlfolder
+	printf "\nDownload folder does not exist, creating...\n"
+fi
+
 ## Check if file exists
 if [ -f "$fullpath" ]; then
 	printf "\n$filename already exists in $folder, skipping download...\n"
