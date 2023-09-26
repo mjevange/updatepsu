@@ -12,6 +12,7 @@ Useful for when the updater cannot be used or full release update is required.
 # Planned
 - Add logic to check if user is already on latest version, provide option to skip
 - Add option to overwrite, rather than clear install dir (maybe not nessecaery since configs live elsewhere)
+- Verify checksum up downloaded file
 
 # Requirements
 - Install lynx package
