@@ -4,7 +4,7 @@ Install, Refresh, and/or Update to the latest version of PlaneShift Unreal for L
 Useful for when official updater cannot be used, full release update is required, or to "refresh" a broken install.
 
 # Features
-- Always downloads the latest published full package
+- Always targets latest published full package
 - Checks if already downloaded, skips if true
 - Allows user to specify install and download directory (Optional)
 - Checks for existance of install and download directory, creates them if missing
@@ -14,7 +14,7 @@ Useful for when official updater cannot be used, full release update is required
 
 # Planned
 - Add logic to check if user has latest version applied and skip install
--Add option to override install skip when latest version already installed, in order to force "refresh" install
+- Add option to override install skip when latest version already installed, in order to force "refresh" install
 - Add option to perform overwrite install, rather than "refresh" install (maybe not nessecaery since configs live elsewhere)
 - Verify checksum up downloaded file
 
