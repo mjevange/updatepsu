@@ -24,6 +24,8 @@ if [ ! -d "$dlfolder" ]; then
 	## If not, create
 	mkdir -p $dlfolder
 	printf "\nDownload folder does not exist, creating...\n"
+else
+	printf "\nFolder $dlfolder exists, moving on...\n"
 fi
 
 ## Check if file exists
