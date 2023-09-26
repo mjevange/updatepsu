@@ -6,16 +6,16 @@ dlfolder=~/Downloads
 infolder=~/PSUnreal
 
 ## Get Latest Link
-printf "\nPull downloads page, parse and store link for latest PlaneShift Unreal for Linux package: $link\n"
 link=$(lynx -dump -listonly -nonumbers https://www.planeshift.it/Download | grep PSUnreal-Linux)
+printf "\nPull downloads page, parse and store link for latest PlaneShift Unreal for Linux package: $link\n"
 
 ## Extract filename from Link
-printf "\nParsing and storing filename string: $filename\n"
 filename=$(echo "$link" | sed 's:.*/::')
+printf "\nParsing and storing filename string: $filename\n"
 
 ## Remember filename with full path
-printf "\nBuilding and Storing full path string: $fullpath\n"
 fullpath=$dlfolder/$filename
+printf "\nBuilding and Storing full path string: $fullpath\n"
 
 ## Check if default Downloads folder does NOT exist
 ## It should really already exist on every linux Distro by default, but lets check anyway
