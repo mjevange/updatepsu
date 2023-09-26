@@ -1,5 +1,5 @@
 # updatepsu
-Refresh Installation and/or Update to latest version of PS Unreal. Useful for when the updater cannot be used or full release update is required.
+Refresh Installation and/or Update to latest version of PlaneShift Unreal for Linux. Useful for when the updater cannot be used or full release update is required.
 
 # Features
 - Always downloads the latest version of PlaneShift Unreal for Linux
@@ -7,6 +7,10 @@ Refresh Installation and/or Update to latest version of PS Unreal. Useful for wh
 - Checks for existance of install directory
 - Checks is install directory is empty
 - Checks with user before clearing install directory
+
+# Planned
+- Add logic to check if user is already on latest version
+- Add option to overwrite, rather than clear install dir (maybe not nessecaery since configs live elsewhere)
 
 # Requirements
 - Install lynx package
