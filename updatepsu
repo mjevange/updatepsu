@@ -1,4 +1,4 @@
-#!/sbin/bash
+#!/usr/bin/env bash
 #
 
 ## Set download and install folders
