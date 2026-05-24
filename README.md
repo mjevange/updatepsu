@@ -11,12 +11,12 @@ Useful for when official updater cannot be used, full release update is required
 - Checks if install directory is empty, user confirmation if not empty
 - User confirmation before clearing directory (refresh install)
 - Prunes root dir from package, that way we always extract to same install folder (useful for maintaining shortcuts across upgrades and avoiding multiple installs)
+- Verifies downloaded archive against the MD5 checksum published on the downloads page (aborts on mismatch)
 
 # Planned
 - Add logic to check if user has latest version applied and skip install
 - Add option to override install skip when latest version already installed, in order to force "refresh" install
 - Add option to perform overwrite install, rather than "refresh" install (maybe not nessecaery since configs live elsewhere)
-- Verify checksum up downloaded file
 
 # Requirements
 - Install lynx package

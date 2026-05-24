@@ -9,6 +9,10 @@ infolder=~/PSUnreal
 link=$(lynx -dump -listonly -nonumbers https://www.planeshift.it/Download | grep -oE 'https?://[^[:space:]"]+PSUnreal-Linux[^[:space:]"]+\.tar\.bz2' | head -n1)
 printf "\nPull downloads page, parse and store link for latest PlaneShift Unreal for Linux package: $link\n"
 
+## Get expected MD5 checksum from the same page (line: "PSUnreal Linux Client md5 checksum: <hash>")
+expected_md5=$(lynx -dump https://www.planeshift.it/Download | sed -nE 's/.*PSUnreal Linux Client md5 checksum: ([a-f0-9]{32}).*/\1/p')
+printf "\nParse expected MD5 checksum from downloads page: $expected_md5\n"
+
 ## Extract filename from Link
 filename=$(echo "$link" | sed 's:.*/::')
 printf "\nParsing and storing filename string: $filename\n"
@@ -36,6 +40,19 @@ else
 	printf "\n$filename does not exist in $dlfolder, downloading...\n"
 	wget -P $dlfolder $link
 fi
+
+## Verify downloaded archive matches the published MD5 before touching install folder
+## If we couldn't parse the expected hash, abort rather than extract an unverified archive
+if [ -z "$expected_md5" ]; then
+	printf "\nCould not parse expected MD5 from downloads page. Aborting before install.\n"
+	exit 1
+fi
+actual_md5=$(md5sum "$fullpath" | awk '{print $1}')
+if [ "$actual_md5" != "$expected_md5" ]; then
+	printf "\nMD5 mismatch!\n  expected: $expected_md5\n  actual:   $actual_md5\nDownloaded file may be corrupted or stale. Delete $fullpath and re-run. Aborting.\n"
+	exit 1
+fi
+printf "\nMD5 verified ($actual_md5), proceeding with install...\n"
 
 ## Check if install folder does NOT exist
 if [ ! -d "$infolder" ]; then
