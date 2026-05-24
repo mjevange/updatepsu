@@ -5,6 +5,26 @@
 dlfolder=~/Downloads
 infolder=~/PSUnreal
 
+## Welcome banner and short intro so the user knows what the script is about to do
+cat <<'EOF'
+
+                 _       _
+ _   _ _ __   __| | __ _| |_ ___ _ __  ___ _   _
+| | | | '_ \ / _` |/ _` | __/ _ \ '_ \/ __| | | |
+| |_| | |_) | (_| | (_| | ||  __/ |_) \__ \ |_| |
+ \__,_| .__/ \__,_|\__,_|\__\___| .__/|___/\__,_|
+      |_|                       |_|
+
+PlaneShift Unreal updater for Linux.
+
+This will fetch the latest PSUnreal client from planeshift.it, verify it
+against the published MD5 checksum, and install it. Your settings live in
+$HOME/.config/Epic/PSUnreal and are stored separately, so they are not
+touched by an install or a refresh.
+
+EOF
+printf "Download folder: %s\nInstall folder:  %s\n" "$dlfolder" "$infolder"
+
 ## Get Latest Link
 link=$(lynx -dump -listonly -nonumbers https://www.planeshift.it/Download | grep -oE 'https?://[^[:space:]"]+PSUnreal-Linux[^[:space:]"]+\.tar\.bz2' | head -n1)
 printf "\nPull downloads page, parse and store link for latest PlaneShift Unreal for Linux package: $link\n"
