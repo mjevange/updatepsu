@@ -30,10 +30,10 @@ fi
 
 ## Check if file exists
 if [ -f "$fullpath" ]; then
-	printf "\n$filename already exists in $folder, skipping download...\n"
+	printf "\n$filename already exists in $dlfolder, skipping download...\n"
 else
 	## If not, download
-	printf "\n$filename does not exist in $folder, downloading...\n"
+	printf "\n$filename does not exist in $dlfolder, downloading...\n"
 	wget -P $dlfolder $link
 fi
 
