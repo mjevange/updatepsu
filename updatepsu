@@ -36,12 +36,6 @@ else
 	printf "\nNo existing install detected at $config_xml\n"
 fi
 
-## Skip if already on latest. If either side is empty (couldn't parse), fall through and install.
-if [ -n "$latest_version" ] && [ "$latest_version" = "$installed_version" ]; then
-	printf "\nAlready on latest version ($installed_version), nothing to do.\n"
-	exit 0
-fi
-
 ## Check if default Downloads folder does NOT exist
 ## It should really already exist on every linux Distro by default, but lets check anyway
 ## This will also fix user error if they specify a custom folder that doesn't exist
@@ -75,30 +69,40 @@ if [ "$actual_md5" != "$expected_md5" ]; then
 fi
 printf "\nMD5 verified ($actual_md5), proceeding with install...\n"
 
-## Check if install folder does NOT exist
-if [ ! -d "$infolder" ]; then
-	## If not, create
-	printf "\nFolder $infolder doesn't exist, creating...\n"
-	mkdir -p  $infolder
+## Decide whether to install. Fresh installs run silently; otherwise ask, with
+## wording that depends on whether this is an update, a same-version refresh,
+## or an unknown existing install. Replacing the install folder is non-destructive
+## to user settings — those live in $HOME/.config/Epic/PSUnreal, which is never touched.
+if [ ! -d "$infolder" ] || [ -z "$(ls -A "$infolder" 2>/dev/null)" ]; then
+	printf "\n$infolder is empty, installing latest ($latest_version)...\n"
+	proceed=y
 else
-	printf "\nFolder $infolder exists, moving on...\n"
+	if [ -n "$latest_version" ] && [ "$latest_version" = "$installed_version" ]; then
+		printf "\nYou are already on the latest version ($installed_version).\n"
+		prompt="Refresh anyway (re-extract the package)? [y/N] "
+		default=n
+	elif [ -n "$installed_version" ] && [ -n "$latest_version" ]; then
+		printf "\nUpdate available: $installed_version -> $latest_version\n"
+		prompt="Install update? [Y/n] "
+		default=y
+	else
+		printf "\nExisting files found in $infolder (version unknown). Latest available: $latest_version\n"
+		prompt="Replace with latest? [y/N] "
+		default=n
+	fi
+	printf "Your settings in \$HOME/.config/Epic/PSUnreal are stored separately and will not be touched.\n"
+	read -p "$prompt" -r REPLY
+	[ -z "$REPLY" ] && REPLY=$default
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+		proceed=y
+	else
+		proceed=n
+	fi
 fi
 
-## Check if folder empty
-if [ -z "$(ls -A $infolder)" ]; then
-	## If yes, safe to extract
-	printf "\nFolder $infolder is empty, extracting $fullpath...\n"
-	tar --recursive-unlink --strip-components=2 -xjvf $fullpath -C $infolder
+if [ "$proceed" = "y" ]; then
+	mkdir -p "$infolder"
+	tar --recursive-unlink --strip-components=2 -xjvf "$fullpath" -C "$infolder"
 else
-	## If no, check with user first
-	printf "\nFolder $infolder is not empty!!\nThis operation will delete contents of $infolder before extraction!!\nNote: PlaneShift Unreal for Linux Configs are safley stored in $HOME/.config/Epic/PSUnreal\n"
-	read -p "Are you sure you want to continue (y/n)? " -n 1 -r
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		## Echo new line for print clenlienss
-		printf "\n"
-		## User replied Y, clear $infolder and extract
-		tar --recursive-unlink --strip-components=2 -xjvf $fullpath -C $infolder
-	else
-		printf "\nCancelling operation...\n"
-	fi
+	printf "\nCancelled.\n"
 fi
