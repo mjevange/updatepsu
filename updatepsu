@@ -21,6 +21,27 @@ printf "\nParsing and storing filename string: $filename\n"
 fullpath=$dlfolder/$filename
 printf "\nBuilding and Storing full path string: $fullpath\n"
 
+## Parse latest version from filename (e.g. PSUnreal-Linux-0.7.55.tar.bz2 -> 0.7.55)
+latest_version=$(echo "$filename" | sed -nE 's/^PSUnreal-Linux-([0-9.]+)\.tar\.bz2$/\1/p')
+printf "\nLatest available version: $latest_version\n"
+
+## Read installed version from the config.xml that ships in the package
+## (line: <version name="X.Y.ZZ" />). Empty if file missing/malformed.
+config_xml=$infolder/PSUnreal/Config/config.xml
+if [ -f "$config_xml" ]; then
+	installed_version=$(sed -nE 's/.*<version name="([^"]+)".*/\1/p' "$config_xml")
+	printf "\nInstalled version: $installed_version\n"
+else
+	installed_version=""
+	printf "\nNo existing install detected at $config_xml\n"
+fi
+
+## Skip if already on latest. If either side is empty (couldn't parse), fall through and install.
+if [ -n "$latest_version" ] && [ "$latest_version" = "$installed_version" ]; then
+	printf "\nAlready on latest version ($installed_version), nothing to do.\n"
+	exit 0
+fi
+
 ## Check if default Downloads folder does NOT exist
 ## It should really already exist on every linux Distro by default, but lets check anyway
 ## This will also fix user error if they specify a custom folder that doesn't exist

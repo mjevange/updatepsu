@@ -12,9 +12,9 @@ Useful for when official updater cannot be used, full release update is required
 - User confirmation before clearing directory (refresh install)
 - Prunes root dir from package, that way we always extract to same install folder (useful for maintaining shortcuts across upgrades and avoiding multiple installs)
 - Verifies downloaded archive against the MD5 checksum published on the downloads page (aborts on mismatch)
+- Detects installed version by reading the shipped PSUnreal/Config/config.xml and skips install if already on the latest published version (works for manual installs too)
 
 # Planned
-- Add logic to check if user has latest version applied and skip install
 - Add option to override install skip when latest version already installed, in order to force "refresh" install
 - Add option to perform overwrite install, rather than "refresh" install (maybe not nessecaery since configs live elsewhere)
 
