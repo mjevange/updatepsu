@@ -31,14 +31,20 @@ Useful for when official updater cannot be used, full release update is required
 The script checks for both at startup and prints the exact install command for your distro (apt, pacman, dnf, zypper) if either is missing.
 
 # Recommended Usage
-You can run this from anywhere — it will always download and install to the paths you confirm at the prompt (defaults to `~/Downloads` and `~/PSUnreal`).
+The script is a single self-contained file. It will download and install to the paths you confirm at the prompt (defaults to `~/Downloads` and `~/PSUnreal`), so you can run it from anywhere.
 
-Quickest way to try it after cloning:
+**Quickest — just grab the script:**
 ```
+wget https://raw.githubusercontent.com/mjevange/updatepsu/main/updatepsu
+chmod +x updatepsu
+./updatepsu
+```
+
+**Or clone the whole repo:**
+```
+git clone https://github.com/mjevange/updatepsu.git
+cd updatepsu
 bash updatepsu
 ```
 
-To make it available globally:
-- Copy `updatepsu` into `~/bin` (or anywhere on your `$PATH`)
-- Make it executable: `chmod +x ~/bin/updatepsu`
-- Now you can run `updatepsu` from any terminal
+To run it from anywhere afterward, copy `updatepsu` into a directory on your `$PATH` (e.g. `~/bin`) and you can invoke it as `updatepsu` from any terminal.
