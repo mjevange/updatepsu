@@ -43,6 +43,7 @@ EOF
 ## Let the user accept the defaults (just press Enter) or type a different path.
 ## Skip prompts when stdin isn't a TTY (e.g. piped/scripted) so non-interactive runs keep working.
 if [ -t 0 ]; then
+	printf "${C_DIM}Press Enter to accept the default in brackets, or type a different path.${C_RESET}\n"
 	printf "${C_BOLD}Download folder${C_RESET} [${C_DIM}%s${C_RESET}]: " "$dlfolder"
 	read -e -r input
 	[ -n "$input" ] && dlfolder="${input/#\~/$HOME}"
