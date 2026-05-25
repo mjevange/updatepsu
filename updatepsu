@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
 #
 
+## ANSI colors. Empty when stdout is not a TTY (e.g. piped to a file).
+if [ -t 1 ]; then
+	C_RESET=$'\033[0m'
+	C_BOLD=$'\033[1m'
+	C_DIM=$'\033[2m'
+	C_RED=$'\033[31m'
+	C_GREEN=$'\033[32m'
+	C_YELLOW=$'\033[33m'
+	C_CYAN=$'\033[36m'
+else
+	C_RESET= C_BOLD= C_DIM= C_RED= C_GREEN= C_YELLOW= C_CYAN=
+fi
+
 ## Set download and install folders
 dlfolder=~/Downloads
 infolder=~/PSUnreal
 
 ## Welcome banner and short intro so the user knows what the script is about to do
+printf '%s' "$C_CYAN"
 cat <<'EOF'
 
                  _       _
@@ -15,6 +29,9 @@ cat <<'EOF'
  \__,_| .__/ \__,_|\__,_|\__\___| .__/|___/\__,_|
       |_|                       |_|
 
+EOF
+printf '%s' "$C_RESET"
+cat <<'EOF'
 PlaneShift Unreal updater for Linux.
 
 This will fetch the latest PSUnreal client from planeshift.it, verify it
@@ -23,37 +40,37 @@ $HOME/.config/Epic/PSUnreal and are stored separately, so they are not
 touched by an install or a refresh.
 
 EOF
-printf "Download folder: %s\nInstall folder:  %s\n" "$dlfolder" "$infolder"
+printf "${C_BOLD}Download folder:${C_RESET} %s\n${C_BOLD}Install folder: ${C_RESET} %s\n" "$dlfolder" "$infolder"
 
 ## Get Latest Link
 link=$(lynx -dump -listonly -nonumbers https://www.planeshift.it/Download | grep -oE 'https?://[^[:space:]"]+PSUnreal-Linux[^[:space:]"]+\.tar\.bz2' | head -n1)
-printf "\nPull downloads page, parse and store link for latest PlaneShift Unreal for Linux package: $link\n"
+printf "${C_DIM}\nPull downloads page, parse and store link for latest PlaneShift Unreal for Linux package: $link${C_RESET}\n"
 
 ## Get expected MD5 checksum from the same page (line: "PSUnreal Linux Client md5 checksum: <hash>")
 expected_md5=$(lynx -dump https://www.planeshift.it/Download | sed -nE 's/.*PSUnreal Linux Client md5 checksum: ([a-f0-9]{32}).*/\1/p')
-printf "\nParse expected MD5 checksum from downloads page: $expected_md5\n"
+printf "${C_DIM}\nParse expected MD5 checksum from downloads page: $expected_md5${C_RESET}\n"
 
 ## Extract filename from Link
 filename=$(echo "$link" | sed 's:.*/::')
-printf "\nParsing and storing filename string: $filename\n"
+printf "${C_DIM}\nParsing and storing filename string: $filename${C_RESET}\n"
 
 ## Remember filename with full path
 fullpath=$dlfolder/$filename
-printf "\nBuilding and Storing full path string: $fullpath\n"
+printf "${C_DIM}\nBuilding and Storing full path string: $fullpath${C_RESET}\n"
 
 ## Parse latest version from filename (e.g. PSUnreal-Linux-0.7.55.tar.bz2 -> 0.7.55)
 latest_version=$(echo "$filename" | sed -nE 's/^PSUnreal-Linux-([0-9.]+)\.tar\.bz2$/\1/p')
-printf "\nLatest available version: $latest_version\n"
+printf "\n${C_BOLD}Latest available version:${C_RESET} $latest_version\n"
 
 ## Read installed version from the config.xml that ships in the package
 ## (line: <version name="X.Y.ZZ" />). Empty if file missing/malformed.
 config_xml=$infolder/PSUnreal/Config/config.xml
 if [ -f "$config_xml" ]; then
 	installed_version=$(sed -nE 's/.*<version name="([^"]+)".*/\1/p' "$config_xml")
-	printf "\nInstalled version: $installed_version\n"
+	printf "${C_BOLD}Installed version:       ${C_RESET} $installed_version\n"
 else
 	installed_version=""
-	printf "\nNo existing install detected at $config_xml\n"
+	printf "${C_DIM}No existing install detected at $config_xml${C_RESET}\n"
 fi
 
 ## Check if default Downloads folder does NOT exist
@@ -61,15 +78,15 @@ fi
 ## This will also fix user error if they specify a custom folder that doesn't exist
 if [ ! -d "$dlfolder" ]; then
 	## If not, create
-	printf "\nDownload folder does not exist, creating...\n"
+	printf "${C_DIM}\nDownload folder does not exist, creating...${C_RESET}\n"
 	mkdir -p $dlfolder
 else
-	printf "\nFolder $dlfolder exists, moving on...\n"
+	printf "${C_DIM}\nFolder $dlfolder exists, moving on...${C_RESET}\n"
 fi
 
 ## Check if file exists
 if [ -f "$fullpath" ]; then
-	printf "\n$filename already exists in $dlfolder, skipping download...\n"
+	printf "${C_DIM}\n$filename already exists in $dlfolder, skipping download...${C_RESET}\n"
 else
 	## If not, download
 	printf "\n$filename does not exist in $dlfolder, downloading...\n"
@@ -79,39 +96,40 @@ fi
 ## Verify downloaded archive matches the published MD5 before touching install folder
 ## If we couldn't parse the expected hash, abort rather than extract an unverified archive
 if [ -z "$expected_md5" ]; then
-	printf "\nCould not parse expected MD5 from downloads page. Aborting before install.\n"
+	printf "${C_RED}\nCould not parse expected MD5 from downloads page. Aborting before install.${C_RESET}\n"
 	exit 1
 fi
 actual_md5=$(md5sum "$fullpath" | awk '{print $1}')
 if [ "$actual_md5" != "$expected_md5" ]; then
-	printf "\nMD5 mismatch!\n  expected: $expected_md5\n  actual:   $actual_md5\nDownloaded file may be corrupted or stale. Delete $fullpath and re-run. Aborting.\n"
+	printf "${C_RED}\nMD5 mismatch!\n  expected: $expected_md5\n  actual:   $actual_md5\nDownloaded file may be corrupted or stale. Delete $fullpath and re-run. Aborting.${C_RESET}\n"
 	exit 1
 fi
-printf "\nMD5 verified ($actual_md5), proceeding with install...\n"
+printf "${C_GREEN}\nMD5 verified ($actual_md5), proceeding with install...${C_RESET}\n"
 
 ## Decide whether to install. Fresh installs run silently; otherwise ask, with
 ## wording that depends on whether this is an update, a same-version refresh,
 ## or an unknown existing install. Replacing the install folder is non-destructive
 ## to user settings — those live in $HOME/.config/Epic/PSUnreal, which is never touched.
 if [ ! -d "$infolder" ] || [ -z "$(ls -A "$infolder" 2>/dev/null)" ]; then
-	printf "\n$infolder is empty, installing latest ($latest_version)...\n"
+	printf "${C_BOLD}\n$infolder is empty, installing latest ($latest_version)...${C_RESET}\n"
 	proceed=y
 else
 	if [ -n "$latest_version" ] && [ "$latest_version" = "$installed_version" ]; then
-		printf "\nYou are already on the latest version ($installed_version).\n"
-		prompt="Refresh anyway (re-extract the package)? [y/N] "
+		printf "${C_YELLOW}\nYou are already on the latest version ($installed_version).${C_RESET}\n"
+		prompt_text="Refresh anyway (re-extract the package)? [y/N]"
 		default=n
 	elif [ -n "$installed_version" ] && [ -n "$latest_version" ]; then
-		printf "\nUpdate available: $installed_version -> $latest_version\n"
-		prompt="Install update? [Y/n] "
+		printf "${C_YELLOW}\nUpdate available: $installed_version -> $latest_version${C_RESET}\n"
+		prompt_text="Install update? [Y/n]"
 		default=y
 	else
-		printf "\nExisting files found in $infolder (version unknown). Latest available: $latest_version\n"
-		prompt="Replace with latest? [y/N] "
+		printf "${C_YELLOW}\nExisting files found in $infolder (version unknown). Latest available: $latest_version${C_RESET}\n"
+		prompt_text="Replace with latest? [y/N]"
 		default=n
 	fi
-	printf "Your settings in \$HOME/.config/Epic/PSUnreal are stored separately and will not be touched.\n"
-	read -p "$prompt" -r REPLY
+	printf "${C_DIM}Your settings in \$HOME/.config/Epic/PSUnreal are stored separately and will not be touched.${C_RESET}\n"
+	printf "${C_BOLD}%s${C_RESET} " "$prompt_text"
+	read -r REPLY
 	[ -z "$REPLY" ] && REPLY=$default
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		proceed=y
@@ -124,5 +142,5 @@ if [ "$proceed" = "y" ]; then
 	mkdir -p "$infolder"
 	tar --recursive-unlink --strip-components=2 -xjvf "$fullpath" -C "$infolder"
 else
-	printf "\nCancelled.\n"
+	printf "${C_YELLOW}\nCancelled.${C_RESET}\n"
 fi
