@@ -30,6 +30,28 @@ fail()    { printf '%sFailed%s\n' "$C_RED" "$C_RESET"; }
 result()  { printf '  %s%s%s\n' "$C_BOLD" "$*" "$C_RESET"; }
 heading() { printf '\n%s%s%s\n' "$C_BOLD" "$*" "$C_RESET"; }
 
+## Preflight: bail early with install instructions if a required tool is missing.
+## Detect the system package manager so the suggested command actually works on
+## the user's distro; fall back to listing common ones if we can't tell.
+require_cmd() {
+	local cmd=$1
+	command -v "$cmd" >/dev/null 2>&1 && return
+	printf '\n%sMissing required tool: %s%s\n' "$C_RED" "$cmd" "$C_RESET"
+	printf 'Install it with:\n'
+	if   command -v apt    >/dev/null 2>&1; then printf '  %ssudo apt install %s%s\n'    "$C_BOLD" "$cmd" "$C_RESET"
+	elif command -v pacman >/dev/null 2>&1; then printf '  %ssudo pacman -S %s%s\n'      "$C_BOLD" "$cmd" "$C_RESET"
+	elif command -v dnf    >/dev/null 2>&1; then printf '  %ssudo dnf install %s%s\n'    "$C_BOLD" "$cmd" "$C_RESET"
+	elif command -v zypper >/dev/null 2>&1; then printf '  %ssudo zypper install %s%s\n' "$C_BOLD" "$cmd" "$C_RESET"
+	else
+		printf '  apt (Debian/Ubuntu):  sudo apt install %s\n' "$cmd"
+		printf '  pacman (Arch):        sudo pacman -S %s\n'   "$cmd"
+		printf '  dnf (Fedora):         sudo dnf install %s\n' "$cmd"
+		printf '  zypper (openSUSE):    sudo zypper install %s\n' "$cmd"
+	fi
+	exit 1
+}
+require_cmd lynx
+
 ## Set download and install folders
 dlfolder=~/Downloads
 infolder=~/PSUnreal
