@@ -36,8 +36,7 @@ The script is a single self-contained file. It will download and install to the 
 **Quickest — just grab the script:**
 ```
 wget https://raw.githubusercontent.com/mjevange/updatepsu/main/updatepsu
-chmod +x updatepsu
-./updatepsu
+bash updatepsu
 ```
 
 **Or clone the whole repo:**
@@ -47,4 +46,8 @@ cd updatepsu
 bash updatepsu
 ```
 
-To run it from anywhere afterward, copy `updatepsu` into a directory on your `$PATH` (e.g. `~/bin`) and you can invoke it as `updatepsu` from any terminal.
+To run it from anywhere afterward, copy `updatepsu` into a directory on your `$PATH` (e.g. `~/bin`), make it executable, and you can invoke it as `updatepsu` from any terminal:
+```
+cp updatepsu ~/bin/
+chmod +x ~/bin/updatepsu
+```
