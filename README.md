@@ -28,7 +28,10 @@ Useful for when official updater cannot be used, full release update is required
 - Add option to perform overwrite install, rather than "refresh" install (maybe not necessary since configs live elsewhere)
 
 # Requirements
-- Install lynx package
+- `lynx` (used to parse the downloads page)
+- `wget` (used to download the package)
+
+The script checks for both at startup and prints the exact install command for your distro (apt, pacman, dnf, zypper) if either is missing.
 
 # Recommended Usage
 You can run this from anywhere, it will always download and install to the specified locations.
