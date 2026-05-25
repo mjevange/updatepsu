@@ -40,7 +40,18 @@ $HOME/.config/Epic/PSUnreal and are stored separately, so they are not
 touched by an install or a refresh.
 
 EOF
-printf "${C_BOLD}Download folder:${C_RESET} %s\n${C_BOLD}Install folder: ${C_RESET} %s\n" "$dlfolder" "$infolder"
+## Let the user accept the defaults (just press Enter) or type a different path.
+## Skip prompts when stdin isn't a TTY (e.g. piped/scripted) so non-interactive runs keep working.
+if [ -t 0 ]; then
+	printf "${C_BOLD}Download folder${C_RESET} [${C_DIM}%s${C_RESET}]: " "$dlfolder"
+	read -e -r input
+	[ -n "$input" ] && dlfolder="${input/#\~/$HOME}"
+	printf "${C_BOLD}Install folder ${C_RESET} [${C_DIM}%s${C_RESET}]: " "$infolder"
+	read -e -r input
+	[ -n "$input" ] && infolder="${input/#\~/$HOME}"
+else
+	printf "${C_BOLD}Download folder:${C_RESET} %s\n${C_BOLD}Install folder: ${C_RESET} %s\n" "$dlfolder" "$infolder"
+fi
 
 ## Get Latest Link
 link=$(lynx -dump -listonly -nonumbers https://www.planeshift.it/Download | grep -oE 'https?://[^[:space:]"]+PSUnreal-Linux[^[:space:]"]+\.tar\.bz2' | head -n1)
