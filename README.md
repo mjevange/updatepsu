@@ -16,7 +16,7 @@ Useful for when official updater cannot be used, full release update is required
 - Always targets latest published full package
 - Checks if already downloaded, skips if true
 - Allows user to specify install and download directory (Optional)
-- Checks for existance of install and download directory, creates them if missing
+- Checks for existence of install and download directory, creates them if missing
 - Checks if install directory is empty, user confirmation if not empty
 - User confirmation before clearing directory (refresh install)
 - Prunes root dir from package, that way we always extract to same install folder (useful for maintaining shortcuts across upgrades and avoiding multiple installs)
@@ -25,12 +25,12 @@ Useful for when official updater cannot be used, full release update is required
 
 # Planned
 - Add option to override install skip when latest version already installed, in order to force "refresh" install
-- Add option to perform overwrite install, rather than "refresh" install (maybe not nessecaery since configs live elsewhere)
+- Add option to perform overwrite install, rather than "refresh" install (maybe not necessary since configs live elsewhere)
 
 # Requirements
 - Install lynx package
 
-# Reccomended Usage
+# Recommended Usage
 You can run this from anywhere, it will always download and install to the specified locations.
 
 I prefer to use it like this:
