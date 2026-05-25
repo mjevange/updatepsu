@@ -51,6 +51,7 @@ require_cmd() {
 	exit 1
 }
 require_cmd lynx
+require_cmd wget
 
 ## Set download and install folders
 dlfolder=~/Downloads
