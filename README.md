@@ -33,17 +33,14 @@ The script checks for both at startup and prints the exact install command for y
 # Recommended Usage
 The script is a single self-contained file. It will download and install to the paths you confirm at the prompt (defaults to `~/Downloads` and `~/PSUnreal`), so you can run it from anywhere.
 
-**Quickest — just grab the script:**
+**Quickest — paste into your terminal:**
 ```
-wget https://raw.githubusercontent.com/mjevange/updatepsu/main/updatepsu
-bash updatepsu
+wget https://raw.githubusercontent.com/mjevange/updatepsu/main/updatepsu && bash updatepsu
 ```
 
 **Or clone the whole repo:**
 ```
-git clone https://github.com/mjevange/updatepsu.git
-cd updatepsu
-bash updatepsu
+git clone https://github.com/mjevange/updatepsu.git && cd updatepsu && bash updatepsu
 ```
 
 To run it from anywhere afterward, copy `updatepsu` into a directory on your `$PATH` (e.g. `~/bin`), make it executable, and you can invoke it as `updatepsu` from any terminal:
