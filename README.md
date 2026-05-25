@@ -14,18 +14,15 @@ Useful for when official updater cannot be used, full release update is required
 
 # Features
 - Always targets latest published full package
-- Checks if already downloaded, skips if true
-- Allows user to specify install and download directory (Optional)
-- Checks for existence of install and download directory, creates them if missing
-- Checks if install directory is empty, user confirmation if not empty
-- User confirmation before clearing directory (refresh install)
-- Prunes root dir from package, that way we always extract to same install folder (useful for maintaining shortcuts across upgrades and avoiding multiple installs)
+- Caches downloads — re-runs skip the download if the archive is already in your download folder
 - Verifies downloaded archive against the MD5 checksum published on the downloads page (aborts on mismatch)
-- Detects installed version by reading the shipped PSUnreal/Config/config.xml and skips install if already on the latest published version (works for manual installs too)
-
-# Planned
-- Add option to override install skip when latest version already installed, in order to force "refresh" install
-- Add option to perform overwrite install, rather than "refresh" install (maybe not necessary since configs live elsewhere)
+- Detects installed version by reading the shipped `PSUnreal/Config/config.xml` and skips install if already on the latest published version (works for manual installs too)
+- Version-aware install prompt: silent on fresh installs, asks before refreshing same version, defaults to yes on updates, defaults to no on unknown existing installs
+- Interactive paths — accept the defaults with Enter, or type a different download / install path at the prompt
+- Creates the install and download directories if missing
+- Prunes the root dir from the package so the install always lands at the same path (useful for maintaining shortcuts across upgrades and avoiding multiple installs)
+- Preflights required tools (`lynx`, `wget`) and prints the exact install command for your distro if either is missing
+- Colored, status-style output with a magenta-to-yellow gradient banner
 
 # Requirements
 - `lynx` (used to parse the downloads page)
@@ -34,8 +31,14 @@ Useful for when official updater cannot be used, full release update is required
 The script checks for both at startup and prints the exact install command for your distro (apt, pacman, dnf, zypper) if either is missing.
 
 # Recommended Usage
-You can run this from anywhere, it will always download and install to the specified locations.
+You can run this from anywhere — it will always download and install to the paths you confirm at the prompt (defaults to `~/Downloads` and `~/PSUnreal`).
 
-I prefer to use it like this:
-- Clone and copy to your ~/bin or other $PATH and run 'updatepsu' from any terminal, anywhere
-- Remember to 'sudo chmod +x ~/bin/updatepsu'
+Quickest way to try it after cloning:
+```
+bash updatepsu
+```
+
+To make it available globally:
+- Copy `updatepsu` into `~/bin` (or anywhere on your `$PATH`)
+- Make it executable: `chmod +x ~/bin/updatepsu`
+- Now you can run `updatepsu` from any terminal
