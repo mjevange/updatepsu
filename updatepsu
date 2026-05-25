@@ -1,36 +1,45 @@
 #!/usr/bin/env bash
 #
 
-## ANSI colors. Empty when stdout is not a TTY (e.g. piped to a file).
+## ANSI colors (256-color). Empty when stdout is not a TTY.
+## Palette is warm and high-contrast: a magenta-to-yellow gradient on the
+## banner, bold teal labels as a cool counterpoint, lime green for success,
+## orange for prompts, pure red for errors. Secondary text stays in the
+## user's default foreground so it remains readable on any theme.
 if [ -t 1 ]; then
 	C_RESET=$'\033[0m'
-	C_BOLD=$'\033[1m'
-	C_DIM=$'\033[2m'
-	C_RED=$'\033[31m'
-	C_GREEN=$'\033[32m'
-	C_YELLOW=$'\033[33m'
-	C_CYAN=$'\033[36m'
+	C_BOLD=$'\033[1;38;5;87m'      # bold teal - labels, prompts, values
+	C_DIM=                          # intentionally empty - default fg for secondary text
+	C_RED=$'\033[1;38;5;196m'      # bold pure red - errors, aborts
+	C_GREEN=$'\033[1;38;5;82m'     # bold lime - success
+	C_YELLOW=$'\033[1;38;5;214m'   # bold orange - prompts, warnings, cancel
+	C_CYAN=$'\033[1;38;5;201m'     # bold magenta - banner accent (kept name for compat)
+	## Per-line gradient for the 6-line banner: magenta -> pink -> rose -> orange -> gold -> yellow
+	BANNER_GRADIENT=($'\033[1;38;5;201m' $'\033[1;38;5;213m' $'\033[1;38;5;204m' $'\033[1;38;5;208m' $'\033[1;38;5;220m' $'\033[1;38;5;226m')
 else
 	C_RESET= C_BOLD= C_DIM= C_RED= C_GREEN= C_YELLOW= C_CYAN=
+	BANNER_GRADIENT=('' '' '' '' '' '')
 fi
 
 ## Set download and install folders
 dlfolder=~/Downloads
 infolder=~/PSUnreal
 
-## Welcome banner and short intro so the user knows what the script is about to do
-printf '%s' "$C_CYAN"
-cat <<'EOF'
-
+## Welcome banner with per-line warm gradient
+printf '\n'
+i=0
+while IFS= read -r line; do
+	printf '%s%s%s\n' "${BANNER_GRADIENT[$i]}" "$line" "$C_RESET"
+	((i++))
+done <<'EOF'
                  _       _
  _   _ _ __   __| | __ _| |_ ___ _ __  ___ _   _
 | | | | '_ \ / _` |/ _` | __/ _ \ '_ \/ __| | | |
 | |_| | |_) | (_| | (_| | ||  __/ |_) \__ \ |_| |
  \__,_| .__/ \__,_|\__,_|\__\___| .__/|___/\__,_|
       |_|                       |_|
-
 EOF
-printf '%s' "$C_RESET"
+printf '\n'
 cat <<'EOF'
 PlaneShift Unreal updater for Linux.
 
